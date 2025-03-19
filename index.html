@@ -5,45 +5,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculator</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
     <div class="container">
         <div class="calculator">
             <form>
                 <div class="display">
-                    <input type="text" name="display">
+                    <input type="text" name="display" id="display">
                 </div>
-                <div>
-                    <input type="button" value="AC" onclick="display.value = ''" class="operator">
-                    <input type="button" value="DE" onclick="display.value = display.value.toString().slice(0,-1)" class="operator">
-                    <input type="button" value="." onclick="display.value += '.'" class="operator">
-                    <input type="button" value="/" onclick="display.value += '/'" class="operator">
+                <div id="front">
+                    <div>
+                        <input type="button" value="AC" onclick="clearDisplay()" class="operator">
+                        <input type="button" value="DEL" onclick="deleteLastCharacter()" class="operator">
+                        <input type="button" value="." onclick="appendToDisplay('.')" class="operator">
+                        <input type="button" value="/" onclick="appendToDisplay('/')" class="operator">
+                    </div>
+                    <div>
+                        <input type="button" value="7" onclick="appendToDisplay('7')">
+                        <input type="button" value="8" onclick="appendToDisplay('8')">
+                        <input type="button" value="9" onclick="appendToDisplay('9')">
+                        <input type="button" value="*" onclick="appendToDisplay('*')" class="operator">
+                    </div>
+                    <div>
+                        <input type="button" value="4" onclick="appendToDisplay('4')">
+                        <input type="button" value="5" onclick="appendToDisplay('5')">
+                        <input type="button" value="6" onclick="appendToDisplay('6')">
+                        <input type="button" value="-" onclick="appendToDisplay('-')" class="operator">
+                    </div>
+                    <div>
+                        <input type="button" value="1" onclick="appendToDisplay('1')">
+                        <input type="button" value="2" onclick="appendToDisplay('2')">
+                        <input type="button" value="3" onclick="appendToDisplay('3')">
+                        <input type="button" value="+" onclick="appendToDisplay('+')" class="operator">
+                    </div>
+                    <div>
+                        <input type="button" value="SC" onclick="toggleAdvanced()" class="operator">
+                        <input type="button" value="0" onclick="appendToDisplay('0')">
+                        <input type="button" value="=" onclick="calculateResult()" class="equal">
+                    </div>
                 </div>
-                <div>
-                    <input type="button" value="7" onclick="display.value += '7'">
-                    <input type="button" value="8" onclick="display.value += '8'">
-                    <input type="button" value="9" onclick="display.value += '9'">
-                    <input type="button" value="*" onclick="display.value += '*'" class="operator">
-                </div>
-                <div>
-                    <input type="button" value="4" onclick="display.value += '4'">
-                    <input type="button" value="5" onclick="display.value += '5'">
-                    <input type="button" value="6" onclick="display.value += '6'">
-                    <input type="button" value="-" onclick="display.value += '-'" class="operator">
-                </div>
-                <div>
-                    <input type="button" value="1" onclick="display.value += '1'">
-                    <input type="button" value="2" onclick="display.value += '2'">
-                    <input type="button" value="3" onclick="display.value += '3'">
-                    <input type="button" value="+" onclick="display.value += '+'" class="operator">
-                </div>
-                <div>
-                    <input type="button" value="00" onclick="display.value += '00'">
-                    <input type="button" value="0" onclick="display.value += '0'">
-                    <input type="button" value="=" onclick="display.value = eval(display.value)" class="equal">
+                <div id="back" style="display:none">
+                    <div>
+                        <input type="button" value="AC" onclick="clearDisplay()" class="operator">
+                        <input type="button" value="DEL" onclick="deleteLastCharacter()" class="operator">
+                        <input type="button" value="." onclick="appendToDisplay('.')" class="operator">
+                        <input type="button" value="/" onclick="appendToDisplay('/')" class="operator">
+                    </div>
+                    <div>
+                        <input type="button" value="sin" onclick="appendToDisplay('Math.sin(')">
+                        <input type="button" value="cos" onclick="appendToDisplay('Math.cos(')">
+                        <input type="button" value="tan" onclick="appendToDisplay('Math.tan(')">
+                        <input type="button" value="*" onclick="appendToDisplay('*')" class="operator">
+                    </div>
+                    <div>
+                        <input type="button" value="ln" onclick="appendToDisplay('Math.log(')">
+                        <input type="button" value="√" onclick="appendToDisplay('Math.sqrt(')">
+                        <input type="button" value="!" onclick="display.value = factorial(display.value)">
+                        <input type="button" value="-" onclick="appendToDisplay('-')" class="operator">
+                    </div>
+                    <div>
+                        <input type="button" value="^" onclick="appendToDisplay('^')">
+                        <input type="button" value="(" onclick="appendToDisplay('(')">
+                        <input type="button" value=")" onclick="appendToDisplay(')')">
+                        <input type="button" value="+" onclick="appendToDisplay(' + ')" class="operator">
+                    </div>
+                    <div>
+                        <input type="button" value="SC" onclick="toggleBasic()" class="operator">
+                        <input type="button" value="0" onclick="appendToDisplay('0')">
+                        <input type="button" value="=" onclick="calculateResult()" class="equal">
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 </body>
+
+<script>
+    function appendToDisplay(value) {
+        document.getElementById("display").value += value;
+    }
+
+    function clearDisplay() {
+        document.getElementById("display").value = '';
+    }
+
+    function deleteLastCharacter() {
+        var display = document.getElementById("display");
+        display.value = display.value.slice(0, -1);
+    }
+
+    function toggleAdvanced() {
+        document.getElementById("front").style.display = "none";
+        document.getElementById("back").style.display = "block";
+    }
+
+    function toggleBasic() {
+        document.getElementById("front").style.display = "block";
+        document.getElementById("back").style.display = "none";
+    }
+
+    function calculateResult() {
+        var exp = document.getElementById("display").value;
+
+        exp = exp.replace(/\^/g, '**');
+
+        try {
+            var result = eval(exp);
+            document.getElementById("display").value = result;
+        } catch (e) {
+            document.getElementById("display").value = "Error";
+        }
+    }
+
+    function factorial(num){
+        return num ? num * factorial(num - 1) : 1;
+    }
+</script>
 </html>
